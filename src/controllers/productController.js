@@ -2,7 +2,14 @@ const Product = require('../models/Product');
 
 exports.createProduct = async (req, res) => {
     try {
-        const newProduct = await Product.create(req.body);
+        // req.user.id viene del Token (gracias al authMiddleware)
+        // req.body trae los datos del producto (nombre, precio, etc.)
+        
+        const newProduct = await Product.create({
+            ...req.body,       // Copia nombre, precio, sku...
+            UserId: req.user.id // <--- ¡Aquí asignamos el dueño!
+        });
+
         res.status(201).json(newProduct);
     } catch (error) {
         res.status(400).json({ error: error.message });
